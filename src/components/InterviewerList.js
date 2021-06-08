@@ -10,7 +10,7 @@ const InterviewerList = ({ interviewers, interviewer, setInterviewer }) => {
         name={i.name}
         avatar={i.avatar}
         selected={i.id === interviewer}
-        setInterviewer={() => setInterviewer(i.id)}
+        setInterviewer={(event) => setInterviewer(i.id)}
         key={i.id}
       />
     );
