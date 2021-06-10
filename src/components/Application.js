@@ -1,44 +1,59 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 
 import "components/Application.scss";
-import { getAppointmentsForDay } from "../helpers/selectors";
+import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
 
-import DayList from './DayList';
-import Appointment from './Appointment';
+import DayList from "./DayList";
+import Appointment from "./Appointment";
 
 export default function Application(props) {
-  const [state, setState] = useState({days: [], day: 'Monday', appointments: {}});
+  const [state, setState] = useState({
+    days: [],
+    day: "Monday",
+    appointments: {},
+    interviewers: {},
+  });
 
-  const dailyAppointments = getAppointmentsForDay(state, state.day);
-  
-  const setDay = day => setState({ ...state, day });
+  const appointments = getAppointmentsForDay(state, state.day);
+  const schedule = appointments.map(appointment => {
+    const interview = getInterview(state, appointment.interview);
+    return (
+      <Appointment
+        key={appointment.id}
+        id={appointment.id}
+        time={appointment.time}
+        interview={interview}
+      />
+    );
+  });
+
+  const setDay = (day) => setState({ ...state, day });
 
   useEffect(() => {
-    const daysPromise = axios.get('/api/days');
-    const apptPromise = axios.get('/api/appointments');
+    const daysPromise = axios.get("/api/days");
+    const apptPromise = axios.get("/api/appointments");
+    const interviewersPromise = axios.get("/api/interviewers");
 
-    Promise.all([daysPromise, apptPromise])
-      .then(all => setState(prev => ({...prev, days: all[0].data, appointments: all[1].data})))
-      .catch(err => console.error(err));
+    Promise.all([daysPromise, apptPromise, interviewersPromise])
+      .then((all) =>
+        setState((prev) => ({
+          ...prev,
+          days: all[0].data,
+          appointments: all[1].data,
+          interviewers: all[2].data,
+        }))
+      )
+      .catch((err) => console.error(err));
   }, []);
-
 
   return (
     <main className="layout">
       <section className="sidebar">
-        <img
-          className="sidebar--centered"
-          src="images/logo.png"
-          alt="Interview Scheduler"
-        />
+        <img className="sidebar--centered" src="images/logo.png" alt="Interview Scheduler" />
         <hr className="sidebar__separator sidebar--centered" />
         <nav className="sidebar__menu">
-          <DayList
-            days={state.days}
-            day={state.day}
-            setDay={setDay}
-          />
+          <DayList days={state.days} day={state.day} setDay={setDay} />
         </nav>
         <img
           className="sidebar__lhl sidebar--centered"
@@ -47,8 +62,8 @@ export default function Application(props) {
         />
       </section>
       <section className="schedule">
-        {dailyAppointments.map(appointment => <Appointment {...appointment} key={appointment.id} />)}
-        <Appointment time="5pm" key="last"/>
+        {schedule}
+        <Appointment time="5pm" key="last" />
       </section>
     </main>
   );
