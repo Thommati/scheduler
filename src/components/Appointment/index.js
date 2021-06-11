@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+
+import "./styles.scss";
 import useVisualMode from "../../hooks/useVisualMode";
 
 import Header from "./Header";
@@ -7,14 +9,14 @@ import Show from "./Show";
 import Empty from "./Empty";
 import Form from "./Form";
 import Status from "./Status";
-
-import "./styles.scss";
+import Confirm from "./Confirm";
 
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
-const DELETING = "DELETING"
+const DELETING = "DELETING";
+const CONFIRM = "CONFIRM";
 
 const Appointment = (props) => {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
@@ -36,7 +38,7 @@ const Appointment = (props) => {
       .catch(err => console.error(err));
   };
 
-  const deleteInterview = () => {
+  const deleteInterviewConfirmed = () => {
     transition(DELETING);
     axios.delete(`/api/appointments/${props.id}`)
       .then(response => {
@@ -46,6 +48,10 @@ const Appointment = (props) => {
         }
       })
       .catch(err => console.error(err));
+  };
+
+  const deleteInterview = () => {
+    transition(CONFIRM);
   };
 
   return (
@@ -70,6 +76,7 @@ const Appointment = (props) => {
       )}
       {mode === SAVING && <Status message="Saving" />}
       {mode === DELETING && <Status message="Deleting" />}
+      {mode === CONFIRM && <Confirm onCancel={back} onConfirm={deleteInterviewConfirmed} />}
     </article>
   );
 };
