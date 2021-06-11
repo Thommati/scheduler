@@ -6,12 +6,14 @@ import Header from "./Header";
 import Show from "./Show";
 import Empty from "./Empty";
 import Form from "./Form";
+import Status from "./Status";
 
 import "./styles.scss";
 
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
+const SAVING = "SAVING";
 
 const Appointment = (props) => {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
@@ -22,6 +24,7 @@ const Appointment = (props) => {
       interviewer
     };
     
+    transition(SAVING);
     axios.put(`/api/appointments/${props.id}`, {interview})
       .then(response => {
         if (response.request.status === 204) {
@@ -48,6 +51,7 @@ const Appointment = (props) => {
           interviewer=""
         />
       )}
+      {mode === SAVING && <Status message="Saving..." />}
     </article>
   );
 };
