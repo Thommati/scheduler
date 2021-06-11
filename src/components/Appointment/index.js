@@ -15,6 +15,15 @@ const CREATE = "CREATE";
 const Appointment = (props) => {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
 
+  const save = (name, interviewer) => {
+    const interview = {
+      student: name,
+      interviewer
+    };
+
+    props.bookInterview(props.id  , interview);
+  };
+
   return (
     <article className="appointment">
       <Header time={props.time} />
@@ -25,7 +34,7 @@ const Appointment = (props) => {
       {mode === CREATE && (
         <Form
           interviewers={props.interviewers}
-          onSave={() => console.log("onSave")}
+          onSave={save}
           onCancel={back}
           name=""
           interviewer=""

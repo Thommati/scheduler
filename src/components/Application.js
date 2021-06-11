@@ -15,6 +15,10 @@ export default function Application(props) {
     interviewers: {},
   });
 
+  const bookInterview = (id, interview) => {
+    console.log(id, interview);
+  };
+
   const appointments = getAppointmentsForDay(state, state.day);
   const interviewers = getInterviewersForDay(state, state.day);
   const schedule = appointments.map(appointment => {
@@ -26,6 +30,7 @@ export default function Application(props) {
         time={appointment.time}
         interview={interview}
         interviewers={interviewers}
+        bookInterview={bookInterview} // Is this the correct prop? onAdd?
       />
     );
   });
