@@ -27,7 +27,20 @@ export default function Application(props) {
     };
 
     setState({ ...state, appointments });
-    console.log(id, interview);
+  };
+
+  const cancelInterview = (appointmentId) => {
+    const appointment = {
+      ...state.appointments[appointmentId],
+      interview: null
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [appointmentId]: appointment
+    };
+
+    setState({...state, appointments});
   };
 
   const appointments = getAppointmentsForDay(state, state.day);
@@ -42,6 +55,7 @@ export default function Application(props) {
         interview={interview}
         interviewers={interviewers}
         bookInterview={bookInterview} // Is this the correct prop? onAdd?
+        cancelInterview={cancelInterview}
       />
     );
   });
