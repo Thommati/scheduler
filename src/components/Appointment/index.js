@@ -70,8 +70,6 @@ const Appointment = (props) => {
           interviewers={props.interviewers}
           onSave={save}
           onCancel={back}
-          name=""
-          interviewer=""
         />
       )}
       {mode === SAVING && <Status message="Saving" />}
