@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import useVisualMode from "../../hooks/useVisualMode";
 
 import Header from "./Header";
@@ -20,9 +21,15 @@ const Appointment = (props) => {
       student: name,
       interviewer
     };
-
-    props.bookInterview(props.id  , interview);
-    transition(SHOW);
+    
+    axios.put(`/api/appointments/${props.id}`, {interview})
+      .then(response => {
+        if (response.request.status === 204) {
+          props.bookInterview(props.id  , interview);
+          transition(SHOW);
+        }
+      })
+      .catch(err => console.error(err));
   };
 
   return (
