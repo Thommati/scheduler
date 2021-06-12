@@ -9,6 +9,18 @@ const useApplicationData = () => {
     interviewers: {},
   });
 
+  // Adjust spots remaining for props.day and replace that day in the days array
+  const adjustDays = (appointments) => {
+    const days = [...state.days];
+    const day = { ...days.filter((d) => d.name === state.day)[0] };
+    day.spots = day.appointments.reduce(
+      (acc, curr) => (appointments[curr].interview ? acc : acc + 1),
+      0
+    );
+    days.splice(day.id - 1, 1, day);
+    return days;
+  };
+
   const bookInterview = (id, interview) => {
     return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
       const appointment = {
@@ -21,7 +33,10 @@ const useApplicationData = () => {
         [id]: appointment,
       };
 
-      setState({ ...state, appointments });
+      // Adjust spots
+      const days = adjustDays(appointments);
+
+      setState({ ...state, appointments, days });
     });
   };
 
@@ -37,7 +52,10 @@ const useApplicationData = () => {
         [appointmentId]: appointment,
       };
 
-      setState({ ...state, appointments });
+      // Adjust spos
+      const days = adjustDays(appointments);
+
+      setState({ ...state, appointments, days });
     });
   };
 
