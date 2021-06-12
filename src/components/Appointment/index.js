@@ -31,7 +31,7 @@ const Appointment = (props) => {
       interviewer,
     };
 
-    transition(SAVING, true);
+    transition(SAVING);
     axios
       .put(`/api/appointments/${props.id}`, { interview })
       .then((response) => {
