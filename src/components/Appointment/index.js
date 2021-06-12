@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 
 import "./styles.scss";
 import useVisualMode from "../../hooks/useVisualMode";
@@ -32,27 +31,17 @@ const Appointment = (props) => {
     };
 
     transition(SAVING);
-    axios
-      .put(`/api/appointments/${props.id}`, { interview })
-      .then((response) => {
-        if (response.request.status === 204) {
-          props.bookInterview(props.id, interview);
-          transition(SHOW);
-        }
-      })
+    props
+      .bookInterview(props.id, interview)
+      .then(() => transition(SHOW))
       .catch((err) => transition(ERROR_SAVE, true));
   };
 
   const deleteInterviewConfirmed = () => {
     transition(DELETING, true);
-    axios
-      .delete(`/api/appointments/${props.id}`)
-      .then((response) => {
-        if (response.request.status === 204) {
-          props.cancelInterview(props.id);
-          transition(EMPTY);
-        }
-      })
+    props
+      .cancelInterview(props.id)
+      .then(() => transition(EMPTY))
       .catch((err) => transition(ERROR_DELETE, true));
   };
 
@@ -68,16 +57,16 @@ const Appointment = (props) => {
           onEdit={() => transition(EDIT)}
         />
       )}
-      {mode === CREATE && (
-        <Form
-          interviewers={props.interviewers}
-          onSave={save}
-          onCancel={back}
-        />
-      )}
+      {mode === CREATE && <Form interviewers={props.interviewers} onSave={save} onCancel={back} />}
       {mode === SAVING && <Status message="Saving" />}
       {mode === DELETING && <Status message="Deleting" />}
-      {mode === CONFIRM && <Confirm onCancel={back} onConfirm={deleteInterviewConfirmed} message="Are you sure you would like to delete?" />}
+      {mode === CONFIRM && (
+        <Confirm
+          onCancel={back}
+          onConfirm={deleteInterviewConfirmed}
+          message="Are you sure you would like to delete?"
+        />
+      )}
       {mode === EDIT && (
         <Form
           interviewers={props.interviewers}
