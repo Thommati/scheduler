@@ -12,7 +12,8 @@ import {
   waitForElementToBeRemoved,
   queryByText,
   prettyDOM,
-  getByDisplayValue
+  getByDisplayValue,
+  getByTestId
 } from "@testing-library/react";
 
 import Application from "components/Application";
@@ -74,5 +75,39 @@ describe("Application", () => {
     // 8. Check days remaining for Monday has the text "2 spots remaining"
     const day = getAllByTestId(container, "day").find((d) => queryByText(d, "Monday"));
     expect(getByText(day, "2 spots remaining")).toBeInTheDocument();
+  });
+
+  it("loads data, edits an interview and keeps the spots remaining for Monday the same", async () => {
+    // 1. Render component
+    const { container } = render(<Application />);
+
+    // 2. Wait for data to be loaded by waiting for "Archie Cohen"
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+    const appointment = getAllByTestId(container, "appointment").find((appointment) =>
+      queryByText(appointment, "Archie Cohen")
+    );
+
+    // 3. Click the edit button for the appointment
+    fireEvent.click(getByAltText(appointment, "Edit"));
+
+    // 4. Check that form is loaded with student name
+    expect(getByTestId(appointment, "student-name-input")).toHaveValue("Archie Cohen");
+
+    // 5. Change interviewer to 1, "Sylvia Palmer"
+    fireEvent.click(getByAltText(appointment, "Sylvia Palmer"));
+
+    // 6. Click "Save"
+    fireEvent.click(getByText(appointment, "Save"));
+
+    // 7. Check for "Saving"
+    expect(getByText(appointment, "Saving")).toBeInTheDocument();
+
+    // 8. Check that interviewer is "Tori Malcom"
+    await waitForElementToBeRemoved(() => getByText(appointment, "Saving"));
+    expect(getByText(appointment, "Sylvia Palmer")).toBeInTheDocument();
+
+    // 9. Ceck that days remaining has text "1 spot remaining"
+    const day = getAllByTestId(container, "day").find((d) => queryByText(d, "Monday"));
+    expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
   });
 });
