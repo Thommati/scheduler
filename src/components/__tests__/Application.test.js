@@ -1,5 +1,5 @@
 import React from "react";
-import axios  from "axios";
+import axios from "axios";
 
 import {
   render,
@@ -12,9 +12,7 @@ import {
   getByPlaceholderText,
   waitForElementToBeRemoved,
   queryByText,
-  prettyDOM,
-  getByDisplayValue,
-  getByTestId
+  getByTestId,
 } from "@testing-library/react";
 
 import Application from "components/Application";
@@ -68,7 +66,7 @@ describe("Application", () => {
 
     // 6. Wait for "Deleting" to be displayed
     expect(getByText(appointment, "Deleting")).toBeInTheDocument();
-    
+
     // 7. Wait for add button to be displayed
     await waitForElementToBeRemoved(() => getByText(appointment, "Deleting"));
     expect(getByAltText(appointment, "Add")).toBeInTheDocument();
@@ -137,24 +135,35 @@ describe("Application", () => {
     // Spots available should not have changed
     const day = getAllByTestId(container, "day").find((d) => queryByText(d, "Monday"));
     expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
-    
   });
 
-  // it("shows the delete error when failing to delete an existing appointment", async () => {
-  //   axios.delete.mockRejectedValueOnce();
+  it("shows the delete error when failing to delete an existing appointment", async () => {
+    axios.delete.mockRejectedValueOnce();
 
-  //   const { container } = render(<Application />);
+    const { container } = render(<Application />);
 
-  //   await waitForElement(() => getByText(container, "Archie Cohen"));
-  //   const appointment = getAllByTestId(container, "appointment").find((appointment) =>
-  //     queryByText(appointment, "Archie Cohen")
-  //   );
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+    const appointment = getAllByTestId(container, "appointment").find((appointment) =>
+      queryByText(appointment, "Archie Cohen")
+    );
 
-  //   fireEvent.click(getByAltText(appointment, "Delete"));
+    fireEvent.click(getByAltText(appointment, "Delete"));
 
-  //   // Check for delete confirmation
-  //   expect(getByText(appointment, "Are you sure you would like to delete?")).toBeInTheDocument();
+    // Check for delete confirmation and click confirm
+    expect(getByText(appointment, "Are you sure you would like to delete?")).toBeInTheDocument();
+    fireEvent.click(getByText(appointment, "Confirm"));
+    expect(getByText(appointment, "Deleting"));
 
-  //   console.log(prettyDOM(appointment));
-  // });
+    // Wait and check for failure message
+    await waitForElementToBeRemoved(() => getByText(appointment, "Deleting"));
+    expect(getByText(appointment, "Error deleting appointment"));
+
+    // Close error and check for "Archie Cohen"
+    fireEvent.click(getByAltText(appointment, "Close"));
+    expect(getByText(appointment, "Archie Cohen")).toBeInTheDocument();
+
+    // Remaining days should still be one
+    const day = getAllByTestId(container, "day").find((d) => queryByText(d, "Monday"));
+    expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
+  });
 });
