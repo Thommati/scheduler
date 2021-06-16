@@ -60,7 +60,7 @@ const useApplicationData = () => {
     } catch (err) {
       throw err;
     }
-    dispatch({ type: SET_INTERVIEW, id, interview });
+    // dispatch({ type: SET_INTERVIEW, id, interview });
   };
 
   const cancelInterview = async (id) => {
@@ -71,6 +71,15 @@ const useApplicationData = () => {
   const setDay = (day) => dispatch({ type: SET_DAY, day });
 
   useEffect(() => {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    socket.onopen = () => socket.send('ping');
+    socket.onmessage = event => {
+      const data = JSON.parse(event.data);
+      if (data.type) {
+        dispatch({ ...data });
+      }
+    };
+
     const fetchData = async () => {
       const daysPromise = axios.get("/api/days");
       const apptPromise = axios.get("/api/appointments");
