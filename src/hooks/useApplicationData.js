@@ -65,14 +65,17 @@ const useApplicationData = () => {
 
   const cancelInterview = async (id) => {
     await axios.delete(`/api/appointments/${id}`);
-    dispatch({ type: SET_INTERVIEW, id, interview: null });
+    // dispatch({ type: SET_INTERVIEW, id, interview: null });
   };
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
 
   useEffect(() => {
+    // Set up web socket
     const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
     socket.onopen = () => socket.send('ping');
+
+    // Call dispatch if message with data field is receied.
     socket.onmessage = event => {
       const data = JSON.parse(event.data);
       if (data.type) {
