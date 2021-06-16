@@ -19,7 +19,7 @@ const reducer = (state, action) => {
         appointments: action.appointments,
         interviewers: action.interviewers,
       };
-    case SET_INTERVIEW:     
+    case SET_INTERVIEW:
       return {
         ...state,
         appointments: {
@@ -36,10 +36,10 @@ const reducer = (state, action) => {
             }
             return {
               ...d,
-              spots: action.interview ? d.spots - 1 : d.spots + 1
+              spots: action.interview ? (state.appointments[action.id].interview ? d.spots : d.spots - 1) : d.spots + 1,
             };
-          })
-        ]
+          }),
+        ],
       };
     default:
       throw new Error(`Tried to reduce with unsupported action type: ${action.type}`);
@@ -55,7 +55,11 @@ const useApplicationData = () => {
   });
 
   const bookInterview = async (id, interview) => {
-    await axios.put(`/api/appointments/${id}`, { interview });
+    try {
+      await axios.put(`/api/appointments/${id}`, { interview });
+    } catch (err) {
+      throw err;
+    }
     dispatch({ type: SET_INTERVIEW, id, interview });
   };
 
