@@ -24,25 +24,29 @@ const ERROR_DELETE = "ERROR_DELETE";
 const Appointment = (props) => {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
 
-  const save = (name, interviewer) => {
+  const save = async (name, interviewer) => {
     const interview = {
       student: name,
       interviewer,
     };
 
     transition(SAVING);
-    props
-      .bookInterview(props.id, interview)
-      .then(() => transition(SHOW))
-      .catch((err) => transition(ERROR_SAVE, true));
+    try {
+        await props.bookInterview(props.id, interview);
+        transition(SHOW);
+    } catch {
+      transition(ERROR_SAVE, true);
+    }
   };
 
-  const deleteInterviewConfirmed = () => {
+  const deleteInterviewConfirmed = async () => {
     transition(DELETING, true);
-    props
-      .cancelInterview(props.id)
-      .then(() => transition(EMPTY))
-      .catch((err) => transition(ERROR_DELETE, true));
+    try {
+      await props.cancelInterview(props.id);
+      transition(EMPTY);
+    } catch {
+      transition(ERROR_DELETE, true);
+    }
   };
 
   return (
