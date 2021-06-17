@@ -11,6 +11,7 @@ import Status from "./Status";
 import Confirm from "./Confirm";
 import Error from "./Error";
 
+// Mode constants
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
@@ -30,6 +31,7 @@ const Appointment = (props) => {
       interviewer,
     };
 
+    // Saving a new,or updating an existing appointment
     transition(SAVING);
     try {
         await props.bookInterview(props.id, interview);
@@ -39,6 +41,7 @@ const Appointment = (props) => {
     }
   };
 
+  // Cancelling / deleting an appointment
   const deleteInterviewConfirmed = async () => {
     transition(DELETING, true);
     try {

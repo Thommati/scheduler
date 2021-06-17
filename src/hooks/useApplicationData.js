@@ -11,15 +11,13 @@ const useApplicationData = () => {
     interviewers: {},
   });
 
+  // Save new or update existing appointment / interview
   const bookInterview = async (id, interview) => {
-    try {
-      await axios.put(`/api/appointments/${id}`, { interview });
-    } catch (err) {
-      throw err;
-    }
+    await axios.put(`/api/appointments/${id}`, { interview });
     dispatch({ type: SET_INTERVIEW, id, interview });
   };
 
+  // Cancel / delete appointment / interview
   const cancelInterview = async (id) => {
     await axios.delete(`/api/appointments/${id}`);
     dispatch({ type: SET_INTERVIEW, id, interview: null });
@@ -27,6 +25,7 @@ const useApplicationData = () => {
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
 
+  // Load intital data from server and set state.
   useEffect(() => {
     const fetchData = async () => {
       const daysPromise = axios.get('/api/days');

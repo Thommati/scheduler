@@ -18,6 +18,7 @@ const Form = props => {
     props.onCancel();
   };
 
+  // Submit form if valid, or show eror message if not
   const validate = () => {
     if (name === "") {
       setError('Student name cannot be blank');
