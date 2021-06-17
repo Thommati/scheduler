@@ -56,7 +56,7 @@ const Appointment = (props) => {
     if (mode === SHOW && props.interview === null) {
       transition(EMPTY);
     }
-  }, [mode, transition, props]);
+  }, [mode, transition, props.interview]);
 
   return (
     <article className="appointment" data-testid="appointment">
