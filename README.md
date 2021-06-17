@@ -21,3 +21,9 @@ npm test
 ```sh
 npm run storybook
 ```
+
+## Screenshots
+
+!["Showing new appointment form"](https://raw.githubusercontent.com/Thommati/scheduler/master/docs/AddingAnAppointment.png)
+
+!["Hover over an appointment"](https://raw.githubusercontent.com/Thommati/scheduler/master/docs/HoverOverAppointment.png)
