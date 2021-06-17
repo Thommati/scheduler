@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 
-import reducer, { SET_DAY, SET_APPLICATION_DATA, SET_INTERVIEW } from 'reducers/application';
+import reducer, { SET_DAY, SET_APPLICATION_DATA } from 'reducers/application';
 
 const useApplicationData = () => {
   const [state, dispatch] = useReducer(reducer, {
@@ -17,12 +17,10 @@ const useApplicationData = () => {
     } catch (err) {
       throw err;
     }
-    // dispatch({ type: SET_INTERVIEW, id, interview });
   };
 
   const cancelInterview = async (id) => {
     await axios.delete(`/api/appointments/${id}`);
-    // dispatch({ type: SET_INTERVIEW, id, interview: null });
   };
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
