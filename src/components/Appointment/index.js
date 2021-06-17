@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import "./styles.scss";
 import useVisualMode from "../../hooks/useVisualMode";
@@ -49,20 +49,11 @@ const Appointment = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (mode === EMPTY && props.interview !== null) {
-      transition(SHOW);
-    }
-    if (mode === SHOW && props.interview === null) {
-      transition(EMPTY);
-    }
-  }, [mode, transition, props.interview]);
-
   return (
     <article className="appointment" data-testid="appointment">
       <Header time={props.time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === SHOW && props.interview && (
+      {mode === SHOW && (
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer.name}

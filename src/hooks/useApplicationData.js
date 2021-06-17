@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 
-import reducer, { SET_DAY, SET_APPLICATION_DATA } from 'reducers/application';
+import reducer, { SET_DAY, SET_APPLICATION_DATA, SET_INTERVIEW } from 'reducers/application';
 
 const useApplicationData = () => {
   const [state, dispatch] = useReducer(reducer, {
@@ -17,27 +17,17 @@ const useApplicationData = () => {
     } catch (err) {
       throw err;
     }
+    dispatch({ type: SET_INTERVIEW, id, interview });
   };
 
   const cancelInterview = async (id) => {
     await axios.delete(`/api/appointments/${id}`);
+    dispatch({ type: SET_INTERVIEW, id, interview: null });
   };
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
 
   useEffect(() => {
-    // Set up web socket
-    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    socket.onopen = () => socket.send('ping');
-
-    // Call dispatch if message with data field is receied.
-    socket.onmessage = event => {
-      const data = JSON.parse(event.data);
-      if (data.type) {
-        dispatch({ ...data });
-      }
-    };
-
     const fetchData = async () => {
       const daysPromise = axios.get('/api/days');
       const apptPromise = axios.get('/api/appointments');
