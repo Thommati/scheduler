@@ -1,55 +1,12 @@
-import { useEffect, useReducer } from "react";
-import axios from "axios";
+import { useEffect, useReducer } from 'react';
+import axios from 'axios';
 
-const SET_DAY = "SET_DAY";
-const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-const SET_INTERVIEW = "SET_INTERVIEW";
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case SET_DAY:
-      return {
-        ...state,
-        day: action.day,
-      };
-    case SET_APPLICATION_DATA:
-      return {
-        ...state,
-        days: action.days,
-        appointments: action.appointments,
-        interviewers: action.interviewers,
-      };
-    case SET_INTERVIEW:
-      return {
-        ...state,
-        appointments: {
-          ...state.appointments,
-          [action.id]: {
-            ...state.appointments[action.id],
-            interview: action.interview,
-          },
-        },
-        days: [
-          ...state.days.map((d, i) => {
-            if (d.name !== state.day) {
-              return d;
-            }
-            return {
-              ...d,
-              spots: action.interview ? (state.appointments[action.id].interview ? d.spots : d.spots - 1) : d.spots + 1,
-            };
-          }),
-        ],
-      };
-    default:
-      throw new Error(`Tried to reduce with unsupported action type: ${action.type}`);
-  }
-};
+import reducer, { SET_DAY, SET_APPLICATION_DATA, SET_INTERVIEW } from 'reducers/application';
 
 const useApplicationData = () => {
   const [state, dispatch] = useReducer(reducer, {
     days: [],
-    day: "Monday",
+    day: 'Monday',
     appointments: {},
     interviewers: {},
   });
@@ -84,9 +41,9 @@ const useApplicationData = () => {
     };
 
     const fetchData = async () => {
-      const daysPromise = axios.get("/api/days");
-      const apptPromise = axios.get("/api/appointments");
-      const interviewersPromise = axios.get("/api/interviewers");
+      const daysPromise = axios.get('/api/days');
+      const apptPromise = axios.get('/api/appointments');
+      const interviewersPromise = axios.get('/api/interviewers');
 
       const all = await Promise.all([daysPromise, apptPromise, interviewersPromise]);
       dispatch({
